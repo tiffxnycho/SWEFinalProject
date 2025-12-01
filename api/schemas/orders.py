@@ -4,7 +4,6 @@ from pydantic import BaseModel
 from .order_details import OrderDetail
 
 
-
 class OrderBase(BaseModel):
     customer_name: str
     description: Optional[str] = None
@@ -17,11 +16,13 @@ class OrderCreate(OrderBase):
 class OrderUpdate(BaseModel):
     customer_name: Optional[str] = None
     description: Optional[str] = None
+    status: Optional[str] = None
 
 
 class Order(OrderBase):
     id: int
     order_date: Optional[datetime] = None
+    status: Optional[str] = None
     order_details: list[OrderDetail] = None
 
     class ConfigDict:

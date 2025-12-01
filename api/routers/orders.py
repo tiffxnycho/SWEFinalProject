@@ -1,12 +1,14 @@
-from fastapi import APIRouter, Depends, FastAPI, status, Response
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
+
 from ..controllers import orders as controller
 from ..schemas import orders as schema
-from ..dependencies.database import engine, get_db
+from ..schemas import payments as payment_schema
+from ..dependencies.database import get_db
 
 router = APIRouter(
-    tags=['Orders'],
-    prefix="/orders"
+    tags=["Orders"],
+    prefix="/orders",
 )
 
 
@@ -23,6 +25,13 @@ def read_all(db: Session = Depends(get_db)):
 @router.get("/{item_id}", response_model=schema.Order)
 def read_one(item_id: int, db: Session = Depends(get_db)):
     return controller.read_one(db, item_id=item_id)
+
+
+@router.post("/{item_id}/pay", response_model=payment_schema.Payment)
+def pay_order(
+    item_id: int, request: payment_schema.PaymentCreate, db: Session = Depends(get_db)
+):
+    return controller.pay(db=db, item_id=item_id, request=request)
 
 
 @router.put("/{item_id}", response_model=schema.Order)
