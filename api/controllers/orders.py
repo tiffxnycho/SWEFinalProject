@@ -13,7 +13,7 @@ from ..models import payments as payment_model
 def create(db: Session, request):
     new_item = model.Order(
         customer_name=request.customer_name,
-        description=request.description
+        description=request.description,
     )
 
     try:
@@ -50,29 +50,21 @@ def read_one(db: Session, item_id):
 
 
 def pay(db: Session, item_id, request):
-    """
-    Register a payment for a given order.
-
-    This will:
-    - validate the order exists and is not already paid
-    - validate the payment amount is positive and matches the order total
-    - create a payment record
-    - update the order status to PAID
-    """
-    # Fetch order
+    # 1. Make sure order exists
     order = db.query(model.Order).filter(model.Order.id == item_id).first()
     if not order:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Order not found!"
         )
 
+    # 2. Make sure it's not already paid
     if order.status == "PAID":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Order is already paid.",
         )
 
-    # Basic validation for payment input (amount, method)
+    # 3. Validate payment amount
     try:
         payment_amount = Decimal(str(request.amount))
     except (ValueError, TypeError):
@@ -87,13 +79,14 @@ def pay(db: Session, item_id, request):
             detail="Payment amount must be greater than zero.",
         )
 
+    # 4. Validate method
     if not request.method or not request.method.strip():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Payment method is required.",
         )
 
-    # Calculate order total from order details and sandwich prices
+    # 5. Load order items and compute total
     order_details = (
         db.query(order_detail_model.OrderDetail)
         .filter(order_detail_model.OrderDetail.order_id == item_id)
@@ -126,7 +119,7 @@ def pay(db: Session, item_id, request):
             detail=f"Payment amount must equal order total ({order_total}).",
         )
 
-    # Create payment and update order status
+    # 6. Create payment and update order status
     new_payment = payment_model.Payment(
         order_id=item_id,
         amount=payment_amount,

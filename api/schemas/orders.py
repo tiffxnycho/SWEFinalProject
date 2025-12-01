@@ -16,13 +16,11 @@ class OrderCreate(OrderBase):
 class OrderUpdate(BaseModel):
     customer_name: Optional[str] = None
     description: Optional[str] = None
-    status: Optional[str] = None
 
 
 class Order(OrderBase):
     id: int
     order_date: Optional[datetime] = None
-    status: Optional[str] = None
     order_details: list[OrderDetail] = None
 
     class ConfigDict:

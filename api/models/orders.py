@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, DECIMAL, DATETIME
+from sqlalchemy import Column, Integer, String, DATETIME
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from ..dependencies.database import Base
@@ -14,4 +14,5 @@ class Order(Base):
     status = Column(String(20), nullable=False, server_default="PENDING")
 
     order_details = relationship("OrderDetail", back_populates="order")
+
     payments = relationship("Payment", back_populates="order")
