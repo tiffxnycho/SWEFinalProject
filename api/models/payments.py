@@ -7,6 +7,7 @@ from ..dependencies.database import Base
 
 class Payment(Base):
     __tablename__ = "payments"
+    __table_args__ = {"extend_existing": True}
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     order_id = Column(Integer, ForeignKey("orders.id"), nullable=False)

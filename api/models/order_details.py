@@ -5,7 +5,6 @@ from ..dependencies.database import Base
 
 class OrderDetail(Base):
     __tablename__ = "order_details"
-
     __table_args__ = {'extend_existing': True}
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
