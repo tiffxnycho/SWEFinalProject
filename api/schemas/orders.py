@@ -4,7 +4,6 @@ from pydantic import BaseModel
 from .order_details import OrderDetail
 
 
-
 class OrderBase(BaseModel):
     customer_name: str
     description: Optional[str] = None
