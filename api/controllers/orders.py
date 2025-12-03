@@ -28,12 +28,10 @@ def create(db: Session, request):
 
 
 def read_all(db: Session):
-    try:
-        result = db.query(model.Order).all()
-    except SQLAlchemyError as e:
-        error = str(e.__dict__["orig"])
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
-    return result
+    #try
+
+    return db.query(model.Order).all()
+
 
 
 def read_one(db: Session, item_id):
@@ -50,21 +48,18 @@ def read_one(db: Session, item_id):
 
 
 def pay(db: Session, item_id, request):
-    # 1. Make sure order exists
     order = db.query(model.Order).filter(model.Order.id == item_id).first()
     if not order:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Order not found!"
         )
 
-    # 2. Make sure it's not already paid
     if order.status == "PAID":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Order is already paid.",
         )
 
-    # 3. Validate payment amount
     try:
         payment_amount = Decimal(str(request.amount))
     except (ValueError, TypeError):
@@ -79,14 +74,12 @@ def pay(db: Session, item_id, request):
             detail="Payment amount must be greater than zero.",
         )
 
-    # 4. Validate method
     if not request.method or not request.method.strip():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Payment method is required.",
         )
 
-    # 5. Load order items and compute total
     order_details = (
         db.query(order_detail_model.OrderDetail)
         .filter(order_detail_model.OrderDetail.order_id == item_id)
@@ -119,7 +112,6 @@ def pay(db: Session, item_id, request):
             detail=f"Payment amount must equal order total ({order_total}).",
         )
 
-    # 6. Create payment and update order status
     new_payment = payment_model.Payment(
         order_id=item_id,
         amount=payment_amount,

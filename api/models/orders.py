@@ -12,5 +12,12 @@ class Order(Base):
     order_date = Column(DATETIME, nullable=False, server_default=str(datetime.now()))
     description = Column(String(300))
 
-    details = relationship("OrderDetail", back_populates="order")
-    payments = relationship("Payment", back_populates="order")
+
+
+    order_details = relationship("OrderDetail", back_populates="order")
+
+    payments = relationship(
+        "Payment",
+        back_populates="order"
+    )
+
