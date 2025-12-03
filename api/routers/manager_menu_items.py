@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
+from api.schemas.promos import PromoCreate
+from api.controllers import promos as promo_controller
 
 from api.dependencies.database import get_db
 from api.schemas.menu_items import MenuItem
@@ -25,3 +27,4 @@ def update_manager_menu_item(item_id: int, item: MenuItem, db: Session = Depends
 def delete_manager_menu_item(item_id: int, db: Session = Depends(get_db)):
     #manager deletes menu item
     return delete_menu_item(db, item_id)
+

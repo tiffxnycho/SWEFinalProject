@@ -1,3 +1,4 @@
+from typing import Optional
 from datetime import datetime
 from decimal import Decimal
 from pydantic import BaseModel
@@ -20,3 +21,9 @@ class Payment(PaymentBase):
 
     class ConfigDict:
         from_attributes = True
+
+
+class PaymentBase(BaseModel):
+    amount: Decimal
+    method: str
+    promo_code: Optional[str] = None

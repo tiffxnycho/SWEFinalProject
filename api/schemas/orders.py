@@ -10,7 +10,12 @@ class OrderBase(BaseModel):
 
 
 class OrderCreate(OrderBase):
-    pass
+    customer_name: str
+    description: str
+    promo_code: Optional[str] = None
+
+    class Config:
+        orm_mode = True
 
 
 class OrderUpdate(BaseModel):
